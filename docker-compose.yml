@@ -1,0 +1,27 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: companybackend_app
+    volumes:
+      - .:/var/www
+    working_dir: /var/www
+    networks:
+      - companybackend
+
+  web:
+    image: nginx:alpine
+    container_name: companybackend_web
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - companybackend
+
+networks:
+  companybackend:
