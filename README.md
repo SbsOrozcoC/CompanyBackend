@@ -64,6 +64,13 @@ Asegúrate de que estas variables estén así:
     docker-compose exec app chown -R www-data:www-data storage bootstrap/cache
 ```
 
+### Frontend assets (Docker)
+El proyecto utiliza Laravel Mix (Laravel 8).
+```bash
+    docker-compose exec app npm install
+    docker-compose exec app npm run production
+```
+
 # 🔄 7. Ejecutar migraciones
 ```bash
     docker-compose exec app php artisan migrate
