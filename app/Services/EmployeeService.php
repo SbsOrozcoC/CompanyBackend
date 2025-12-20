@@ -12,6 +12,14 @@ class EmployeeService
         $this->validatePresident($data);
         $this->validateBoss($data);
 
+        if (empty($data['is_president']) && empty($data['boss_id'])) {
+            $president = Employee::president()->first();
+
+            if ($president) {
+                $data['boss_id'] = $president->id;
+            }
+        }
+
         $employee = Employee::create($data);
 
         if (isset($data['positions'])) {
@@ -26,6 +34,14 @@ class EmployeeService
         $this->validatePresident($data, $employee);
         $this->validateBoss($data, $employee);
 
+        if (empty($data['is_president']) && array_key_exists('boss_id', $data) && empty($data['boss_id'])) {
+            $president = Employee::president()->first();
+
+            if ($president && $president->id !== $employee->id) {
+                $data['boss_id'] = $president->id;
+            }
+        }
+
         $employee->update($data);
 
         if (isset($data['positions'])) {
@@ -35,27 +51,42 @@ class EmployeeService
         return $employee;
     }
 
+
     protected function validatePresident(array $data, Employee $employee = null): void
     {
-        if (!empty($data['is_president'])) {
+        if (!isset($data['positions'])) {
+            return;
+        }
 
-            $exists = Employee::where('is_president', true)
-                ->when($employee, fn($q) => $q->where('id', '!=', $employee->id))
-                ->exists();
+        $presidentPositionId = \App\Models\Position::where('name', 'Presidente')->value('id');
 
-            if ($exists) {
-                throw ValidationException::withMessages([
-                    'is_president' => 'Ya existe un presidente en la empresa.',
-                ]);
-            }
+        if (!$presidentPositionId) {
+            return;
+        }
 
-            if (!empty($data['boss_id'])) {
-                throw ValidationException::withMessages([
-                    'boss_id' => 'El presidente no puede tener jefe.',
-                ]);
-            }
+        if (!in_array($presidentPositionId, $data['positions'])) {
+            return;
+        }
+
+        $exists = Employee::whereHas('positions', function ($q) use ($presidentPositionId) {
+            $q->where('positions.id', $presidentPositionId);
+        })
+            ->when($employee, fn($q) => $q->where('id', '!=', $employee->id))
+            ->exists();
+
+        if ($exists) {
+            throw ValidationException::withMessages([
+                'positions' => 'Ya existe un presidente en la empresa.',
+            ]);
+        }
+
+        if (!empty($data['boss_id'])) {
+            throw ValidationException::withMessages([
+                'boss_id' => 'El presidente no puede tener jefe.',
+            ]);
         }
     }
+
 
     protected function validateBoss(array $data, Employee $employee = null): void
     {

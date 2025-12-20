@@ -44,9 +44,26 @@
                                     <td>{{ $employee->identification }}</td>
                                     <td>{{ $employee->phone }}</td>
                                     <td>{{ optional($employee->city)->name }}</td>
-                                    <td>
-                                        {{ $employee->positions->pluck('name')->join(', ') }}
+                                    <td class="px-4 py-3 text-sm text-gray-800">
+                                        @if ($employee->is_president)
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 text-xs font-semibold
+                     bg-purple-100 text-purple-800 rounded-full">
+                                                Presidente
+                                            </span>
+                                        @else
+                                            <div class="flex flex-wrap gap-1">
+                                                @foreach ($employee->positions as $position)
+                                                    <span
+                                                        class="inline-flex items-center px-2 py-0.5 text-xs
+                             bg-blue-100 text-blue-800 rounded-full">
+                                                        {{ $position->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     </td>
+
                                     <td class="text-center">
                                         <div class="flex justify-center gap-2">
                                             <a href="{{ route('employees.edit', $employee) }}"
@@ -54,14 +71,18 @@
                                                 Editar
                                             </a>
 
-                                            <form action="{{ route('employees.destroy', $employee) }}" method="POST"
-                                                class="delete-form inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="px-3 py-1 bg-red-600 text-white rounded">
-                                                    Eliminar
-                                                </button>
-                                            </form>
+                                            @if (!$employee->is_president)
+                                                <form action="{{ route('employees.destroy', $employee) }}"
+                                                    method="POST" class="inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                                                        Eliminar
+                                                    </button>
+                                                </form>
+                                            @endif
+
                                         </div>
                                     </td>
                                 </tr>

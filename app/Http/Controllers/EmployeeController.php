@@ -30,7 +30,7 @@ class EmployeeController extends Controller
     {
         return view('employees.create', [
             'countries' => Country::orderBy('name')->get(),
-            'positions' => Position::all(),
+            'positions' => Position::where('name', '!=', 'Presidente')->get(),
             'bosses'    => Employee::notPresident()->get(),
             'selectedCountry' => null,
             'selectedCity'    => null,
@@ -51,7 +51,7 @@ class EmployeeController extends Controller
         return view('employees.edit', [
             'employee'  => $employee->load('positions', 'city.country'),
             'countries' => Country::orderBy('name')->get(),
-            'positions' => Position::all(),
+            'positions' => Position::where('name', '!=', 'Presidente')->get(),
             'bosses'    => Employee::notPresident()
                 ->where('id', '!=', $employee->id)
                 ->get(),

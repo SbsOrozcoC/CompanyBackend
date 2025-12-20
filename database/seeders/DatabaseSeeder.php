@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             CitySeeder::class,
             PositionSeeder::class,
+            AdminUserSeeder::class,
+            PresidentEmployeeSeeder::class,
         ]);
     }
 }
