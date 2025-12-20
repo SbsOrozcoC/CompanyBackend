@@ -73,7 +73,7 @@ El proyecto utiliza Laravel Mix (Laravel 8).
 
 # 🔄 7. Ejecutar migraciones
 ```bash
-    docker-compose exec app php artisan migrate
+    docker-compose exec app php artisan migrate --seed
 ```
 
 # 🌐 8. Acceder a la aplicación
