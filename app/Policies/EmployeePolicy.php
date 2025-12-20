@@ -29,6 +29,8 @@ class EmployeePolicy
 
     public function delete(User $user, Employee $employee)
     {
-        return !$employee->is_president;
+        $presidentPositionId = \App\Models\Position::where('name', 'Presidente')->value('id');
+
+        return !$employee->positions->contains($presidentPositionId);
     }
 }

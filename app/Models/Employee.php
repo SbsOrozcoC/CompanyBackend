@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Employee extends Model
 {
     use SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'first_name',
@@ -56,5 +58,10 @@ class Employee extends Model
     public function scopeNotPresident($query)
     {
         return $query->where('is_president', false);
+    }
+
+    public function scopePresident($query)
+    {
+        return $query->where('is_president', true);
     }
 }

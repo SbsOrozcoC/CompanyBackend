@@ -10,7 +10,6 @@ class PositionSeeder extends Seeder
     public function run(): void
     {
         $positions = [
-            'Presidente',
             'Gerente',
             'Jefe de Área',
             'Analista',
